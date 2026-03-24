@@ -26,6 +26,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   // 사용자가 입력한 값을 저장할 변수들
   String _name = '';
   BaseLiquor _baseLiquor = BaseLiquor.whiskey;
+  CocktailColor _color = CocktailColor.clear;
+  List<CocktailTaste> _tastes = [];
   String _instructions = '';
 
   final List<_IngredientInput> _ingredientInputs = [_IngredientInput()];
@@ -64,6 +66,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         id: DateTime.now().toString(), // 임의의 고유 ID
         name: _name,
         baseLiquor: _baseLiquor,
+        color: _color,
+        tastes: List.from(_tastes),
         ingredients: ingredientList,
         instructions: _instructions,
       );
@@ -142,6 +146,69 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                     if (value != null) _baseLiquor = value;
                   });
                 },
+              ),
+              const SizedBox(height: 16),
+
+              // 칵테일 색상 선택
+              DropdownButtonFormField<CocktailColor>(
+                decoration: const InputDecoration(
+                  labelText: '칵테일 색상',
+                  border: OutlineInputBorder(),
+                ),
+                value: _color,
+                items: CocktailColor.values.map((color) {
+                  return DropdownMenuItem(
+                    value: color,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: color.displayColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.grey),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(color.displayName),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    if (value != null) _color = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // 맛 특징 선택
+              const Text(
+                '맛 특징 (다중 선택 가능)',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                children: CocktailTaste.values.map((taste) {
+                  final isSelected = _tastes.contains(taste);
+                  return FilterChip(
+                    label: Text(taste.displayName),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          _tastes.add(taste);
+                        } else {
+                          _tastes.remove(taste);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 16),
 

@@ -7,6 +7,8 @@ class MockData {
       id: '1',
       name: '진 피즈 (Gin Fizz)',
       baseLiquor: BaseLiquor.gin,
+      color: CocktailColor.clear,
+      tastes: [CocktailTaste.sour, CocktailTaste.fresh],
       ingredients: [
         RecipeIngredient(name: '진', amount: '45ml'),
         RecipeIngredient(name: '레몬 주스', amount: '30ml'),
@@ -20,6 +22,8 @@ class MockData {
       id: '2',
       name: '진 토닉 (Gin & Tonic)',
       baseLiquor: BaseLiquor.gin,
+      color: CocktailColor.clear,
+      tastes: [CocktailTaste.fresh, CocktailTaste.bitter],
       ingredients: [
         RecipeIngredient(name: '진', amount: '45ml'),
         RecipeIngredient(name: '토닉 워터', amount: '적당량'),
@@ -32,6 +36,8 @@ class MockData {
       id: '3',
       name: '마티니 (Martini)',
       baseLiquor: BaseLiquor.gin,
+      color: CocktailColor.clear,
+      tastes: [CocktailTaste.strong, CocktailTaste.dry],
       ingredients: [
         RecipeIngredient(name: '진', amount: '60ml'),
         RecipeIngredient(name: '드라이 베르무트', amount: '15ml'),
@@ -44,6 +50,8 @@ class MockData {
       id: '4',
       name: '올드 패션드 (Old Fashioned)',
       baseLiquor: BaseLiquor.whiskey,
+      color: CocktailColor.brown,
+      tastes: [CocktailTaste.strong, CocktailTaste.sweet, CocktailTaste.bitter],
       ingredients: [
         RecipeIngredient(name: '위스키(버번 또는 라이)', amount: '45ml'),
         RecipeIngredient(name: '각설탕', amount: '1개'),
@@ -57,6 +65,8 @@ class MockData {
       id: '5',
       name: '모히토 (Mojito)',
       baseLiquor: BaseLiquor.rum,
+      color: CocktailColor.green,
+      tastes: [CocktailTaste.sweet, CocktailTaste.fresh, CocktailTaste.sour],
       ingredients: [
         RecipeIngredient(name: '화이트 럼', amount: '45ml'),
         RecipeIngredient(name: '라임', amount: '반 개'),
@@ -67,11 +77,75 @@ class MockData {
       instructions:
           '1. 하이볼 글라스에 라임 조각, 설탕, 민트잎을 넣고 가볍게 으깹니다 (머들링).\n2. 럼과 부순 얼음을 넣고 젓습니다.\n3. 탄산수로 채운 뒤 민트 가지로 장식합니다.',
     ),
+    Cocktail(
+      id: '6',
+      name: '블러디 메리 (Bloody Mary)',
+      baseLiquor: BaseLiquor.vodka,
+      color: CocktailColor.red,
+      tastes: [CocktailTaste.salty, CocktailTaste.fresh],
+      ingredients: [
+        RecipeIngredient(name: '보드카', amount: '45ml'),
+        RecipeIngredient(name: '토마토 주스', amount: '90ml'),
+        RecipeIngredient(name: '레몬 주스', amount: '15ml'),
+        RecipeIngredient(name: '우스터 소스', amount: '2대시'),
+        RecipeIngredient(name: '타바스코 소스', amount: '2대시'),
+        RecipeIngredient(name: '소금/후추', amount: '약간'),
+      ],
+      instructions:
+          '1. 얼음이 담긴 하이볼 글라스에 모든 재료를 넣고 잘 젓습니다.\n2. 샐러리 스틱이나 레몬 조각으로 장식합니다.',
+    ),
+    Cocktail(
+      id: '7',
+      name: '블루 라군 (Blue Lagoon)',
+      baseLiquor: BaseLiquor.vodka,
+      color: CocktailColor.blue,
+      tastes: [CocktailTaste.sweet, CocktailTaste.sour, CocktailTaste.fresh],
+      ingredients: [
+        RecipeIngredient(name: '보드카', amount: '30ml'),
+        RecipeIngredient(name: '블루 큐라소', amount: '30ml'),
+        RecipeIngredient(name: '레모네이드', amount: '적당량'),
+      ],
+      instructions:
+          '1. 얼음이 담긴 하이볼 글라스에 보드카와 블루 큐라소를 넣습니다.\n2. 레모네이드로 잔을 채우고 가볍게 젓습니다.',
+    ),
   ];
 
   // 새로운 레시피를 추가할 때 쓸 함수입니다.
   static void addCocktail(Cocktail cocktail) {
     cocktails.add(cocktail);
+  }
+
+  // 다중 필터 검색 기능입니다.
+  static List<Cocktail> search({
+    BaseLiquor? baseLiquor,
+    CocktailColor? color,
+    List<CocktailTaste>? tastes,
+    String? keyword,
+  }) {
+    return cocktails.where((c) {
+      if (baseLiquor != null && c.baseLiquor != baseLiquor) return false;
+      if (color != null && c.color != color) return false;
+      if (tastes != null && tastes.isNotEmpty) {
+        for (var taste in tastes) {
+          if (!c.tastes.contains(taste)) return false; // 선택된 맛을 모두 가지고 있어야 함 (AND 검색)
+        }
+      }
+      if (keyword != null && keyword.trim().isNotEmpty) {
+        final lower = keyword.toLowerCase();
+        final matchIngredient = c.ingredients.any((ing) => ing.name.toLowerCase().contains(lower));
+        if (!matchIngredient) return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  // 재료 이름으로 칵테일 검색 기능입니다.
+  static List<Cocktail> searchCocktailsByIngredient(String ingredientName) {
+    if (ingredientName.trim().isEmpty) return [];
+    final lowerQuery = ingredientName.toLowerCase();
+    return cocktails.where((c) {
+      return c.ingredients.any((ing) => ing.name.toLowerCase().contains(lowerQuery));
+    }).toList();
   }
 
   // 특정 기주로 만들 수 있는 칵테일만 추려내는 기능입니다.
