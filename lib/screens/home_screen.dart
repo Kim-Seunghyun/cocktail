@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../models/cocktail.dart';
 import 'cocktail_list_screen.dart';
 import 'add_recipe_screen.dart';
+import '../design_system/components/cocktail_card.dart';
+import '../design_system/components/cocktail_background.dart';
+import '../design_system/cocktail_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   BaseLiquor? _selectedLiquor;
   CocktailColor? _selectedColor;
-  List<CocktailTaste> _selectedTastes = [];
+  final List<CocktailTaste> _selectedTastes = [];
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSearchFocused = false;
@@ -69,9 +72,10 @@ class _HomeScreenState extends State<HomeScreen> {
             )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      body: CocktailBackground(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 재료 검색
@@ -104,8 +108,10 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
-            if (_isSearchFocused || _selectedColor != null || _selectedTastes.isNotEmpty) ...[
+
+            if (_isSearchFocused ||
+                _selectedColor != null ||
+                _selectedTastes.isNotEmpty) ...[
               // 색상 필터
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -114,7 +120,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     '색상으로 찾기',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
-                  if (_isSearchFocused && _selectedColor == null && _selectedTastes.isEmpty)
+                  if (_isSearchFocused &&
+                      _selectedColor == null &&
+                      _selectedTastes.isEmpty)
                     TextButton(
                       onPressed: () {
                         _searchFocusNode.unfocus();
@@ -140,7 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: isSelected ? Colors.deepPurple : Colors.transparent,
+                            color: isSelected
+                                ? Colors.deepPurple
+                                : Colors.transparent,
                             width: 2,
                           ),
                         ),
@@ -148,7 +158,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           radius: 18,
                           backgroundColor: color.displayColor,
                           child: isSelected
-                              ? Icon(Icons.check, color: color == CocktailColor.clear ? Colors.black : Colors.white, size: 20)
+                              ? Icon(Icons.check,
+                                  color: color == CocktailColor.clear
+                                      ? Colors.black
+                                      : Colors.white,
+                                  size: 20)
                               : null,
                         ),
                       ),
@@ -157,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // 맛 필터
               const Text(
                 '맛으로 찾기',
@@ -261,7 +275,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+      ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: CocktailColors.primary,
+        foregroundColor: Colors.white,
         onPressed: () {
           Navigator.push(
             context,
@@ -276,3 +293,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

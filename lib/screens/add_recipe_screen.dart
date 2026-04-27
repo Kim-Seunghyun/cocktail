@@ -27,7 +27,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   String _name = '';
   BaseLiquor _baseLiquor = BaseLiquor.whiskey;
   CocktailColor _color = CocktailColor.clear;
-  List<CocktailTaste> _tastes = [];
+  final List<CocktailTaste> _tastes = [];
   String _instructions = '';
 
   final List<_IngredientInput> _ingredientInputs = [_IngredientInput()];
@@ -235,7 +235,8 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                             isDense: true,
                           ),
                           validator: (value) {
-                            if (index == 0 && (value == null || value.trim().isEmpty)) {
+                            if (index == 0 &&
+                                (value == null || value.trim().isEmpty)) {
                               return '필수';
                             }
                             return null;
